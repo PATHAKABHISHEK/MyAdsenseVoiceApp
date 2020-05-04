@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="bot.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap"
+      rel="stylesheet"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="main">
+      <div class="logo">
+        <span id="my">My</span><span id="ad">Ad</span
+        ><span id="sense">sense</span>
+      </div>
+      <div class="search">
+        <input type="text" name="" id="" />
+        <i class="fa fa-microphone fa-2x microphone" id="microphone"></i>
+        <span class="searchBtn">Search</span>
+        <div id="result"></div>
+      </div>
+    </div>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const microphone = document.getElementById("microphone");
+        const result = document.getElementById("result");
+        const SpeechRecognition =
+          window.SpeechRecognition || window.webkitSpeechRecognition;
+        let listening = false;
+        const recognition = new SpeechRecognition();
+        const start = () => {
+          recognition.start();
+        };
+        const stop = () => {
+          recognition.stop();
+        };
+        const onResult = (event) => {
+          result.innerHTML = "";
+          for (const res of event.results) {
+            const text = document.createTextNode(res[0].transcript);
+
+            const p = document.createElement("p");
+            if (res.isFinal) {
+              p.classList.add("final");
+            }
+            p.appendChild(text);
+            result.appendChild(p);
+            if (p.innerHTML.trim().toUpperCase() === "adsense".toUpperCase()) {
+              fetch("/api/v1/query/adsense")
+                .then(function (response) {
+                  console.log(response);
+                  if (response.status !== 200) {
+                    console.log(
+                      "Looks like there was a problem. Status Code: " +
+                        response.status
+                    );
+                    return;
+                  }
+
+                  // Examine the text in the response
+                  response.json().then(function (data) {
+                    console.log(data);
+                  });
+                })
+                .catch(function (err) {
+                  console.log("Fetch Error :-S", err);
+                });
+            } else if (p.innerHTML.trim() === "newspaper languages") {
+              fetch(
+                "/api/v1/query/getNewspaperLanguageIntent?command=newspaper languages"
+              )
+                .then(function (response) {
+                  console.log(response);
+                  if (response.status !== 200) {
+                    console.log(
+                      "Looks like there was a problem. Status Code: " +
+                        response.status
+                    );
+                    return;
+                  }
+
+                  // Examine the text in the response
+                  response.json().then(function (data) {
+                    console.log(data);
+                  });
+                })
+                .catch(function (err) {
+                  console.log("Fetch Error :-S", err);
+                });
+            }
+          }
+        };
+
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.addEventListener("result", onResult);
+
+        microphone.addEventListener("click", () => {
+          listening ? start() : stop();
+          listening = !listening;
+        });
+      });
+    </script>
+  </body>
+</html>
