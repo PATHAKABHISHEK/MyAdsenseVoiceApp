@@ -42,12 +42,14 @@
 
         let recognition = new SpeechRecognition();
         const start = () => {
-          speechSynthesis.speak(
-            new SpeechSynthesisUtterance(
-              "Hello Buddy, I am Adsense,.... You can follow user guide for interacting with me, ..... Who are You, Can I have Your Name Please ?"
-            )
-          );
-          recognition.start();
+          navigator.mediaDevices.getUserMedia({ audio: true }).then(() => {
+            speechSynthesis.speak(
+              new SpeechSynthesisUtterance(
+                "Hello Buddy, I am Adsense,.... You can follow user guide for interacting with me, ..... Who are You, Can I have Your Name Please ?"
+              )
+            );
+            recognition.start();
+          });
         };
         const stop = () => {
           recognition.stop();
