@@ -46,6 +46,13 @@ input{
 i{
     margin-top: 5%;
 }
+#guide{
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    height: 50px;
+    width: 50px;
+}
 
 .circle {
     border-radius: 50%;

@@ -26,6 +26,9 @@
       </div>
       <div id="result"></div>
     </div>
+    <div>
+      <img src="guide.png" alt="" id="guide" />
+    </div>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         const microphone = document.getElementById("microphone");
@@ -54,16 +57,16 @@
           let j = 0;
           for (const res of event.results) {
             const text = document.createTextNode(res[0].transcript);
-            console.log(j);
-            console.log(event.results.length - 1);
+            // console.log(j);
+            // console.log(event.results.length - 1);
             let p = document.createElement("p");
             if (res.isFinal && j == event.results.length - 1) {
               p.classList.add("final");
               // console.log(event.results[event.results.length - 1]);
-              console.log(res);
+              // console.log(res);
               textContent += res[0].transcript.trim();
               // event.results[event.results.length - 1][0].transcript;
-              console.log(textContent);
+              // console.log(textContent);
               if (textContent.split(" ").indexOf("name") >= 0) {
                 let name = textContent.split(" ")[
                   textContent.split(" ").length - 1
@@ -73,10 +76,11 @@
                   new SpeechSynthesisUtterance(
                     `Hi, ${window.localStorage.getItem(
                       "name"
-                    )}, I can do 3 Things for You ?
+                    )}, I can do 4 Things for You ?
                      First,  You can Ask For What are currently available newspaper languages in MyAdsense,
-                     second, You can also ask for What are all newspapers in specific newspaper language and category ?
-                     and third,  You can Ask For Newspaper Ad rates.
+                     second, You can also Ask For What are all the ad Categories in particular newspaper language,
+                     third, You can ask for What are all newspapers in specific newspaper language and category ?
+                     and fourth,  You can Ask For Newspaper Ad rates.
                      Which Option You Like the most ? `
                   )
                 );
@@ -123,7 +127,56 @@
                 "option" ===
                   textContent.split(" ")[textContent.split(" ").length - 1] &&
                 textContent.split(" ")[textContent.split(" ").length - 2] ==
-                  "third"
+                  "second"
+              ) {
+                let option = "second";
+                window.localStorage.setItem("option", option);
+                speechSynthesis.speak(
+                  new SpeechSynthesisUtterance(
+                    `Ok, ${window.localStorage.getItem(
+                      "name"
+                    )}, You want possible ad categories, .. Just wait a minute, I will be back soon`
+                  )
+                );
+
+                fetch(
+                  `http://localhost:3000/api/v1/newspaper/get_newspaper_category`
+                )
+                  .then(function (response) {
+                    if (response.status !== 200) {
+                      console.log(
+                        "Looks like there was a problem. Status Code: " +
+                          response.status
+                      );
+                      return;
+                    }
+
+                    // Examine the text in the response
+                    response.json().then(function (data) {
+                      let newspapersBasedOnLanguageAndCategory = `${window.localStorage.getItem(
+                        "name"
+                      )}, The ad categories are `;
+                      // console.log(data);
+                      for (let k = 0; k < data["adCategory"].length; k++) {
+                        newspapersBasedOnLanguageAndCategory +=
+                          data["adCategory"][k] + ", ";
+                      }
+                      speechSynthesis.speak(
+                        new SpeechSynthesisUtterance(
+                          newspapersBasedOnLanguageAndCategory
+                        )
+                      );
+                    });
+                  })
+                  .catch(function (err) {
+                    console.log("Fetch Error :-S", err);
+                  });
+              } else if (
+                textContent != "" &&
+                "option" ===
+                  textContent.split(" ")[textContent.split(" ").length - 1] &&
+                textContent.split(" ")[textContent.split(" ").length - 2] ==
+                  "4th"
               ) {
                 speechSynthesis.speak(
                   new SpeechSynthesisUtterance(
@@ -138,9 +191,9 @@
                 "option" ===
                   textContent.split(" ")[textContent.split(" ").length - 1] &&
                 textContent.split(" ")[textContent.split(" ").length - 2] ==
-                  "second"
+                  "third"
               ) {
-                let option = "second";
+                let option = "third";
                 window.localStorage.setItem("option", option);
                 speechSynthesis.speak(
                   new SpeechSynthesisUtterance(
@@ -159,7 +212,7 @@
                 ];
                 language.charAt(0).toUpperCase() + language.slice(1);
                 window.localStorage.setItem("language", language);
-                if (window.localStorage.getItem("option") == "second") {
+                if (window.localStorage.getItem("option") == "third") {
                   speechSynthesis.speak(
                     new SpeechSynthesisUtterance(
                       `Now Tell me the Category of ads in which you want to search newspapers`
@@ -181,7 +234,7 @@
                   .split(" ")
                   [textContent.split(" ").length - 2].toLowerCase();
                 window.localStorage.setItem("category", category);
-                if (window.localStorage.getItem("option") == "second") {
+                if (window.localStorage.getItem("option") == "third") {
                   speechSynthesis.speak(
                     new SpeechSynthesisUtterance(
                       `${window.localStorage.getItem(
@@ -262,7 +315,6 @@
                   let array = textContent.split(" ");
                   array.pop();
                   newspaper = array.join("").toLowerCase();
-                  console.log();
                 } else {
                   newspaper = textContent
                     .split(" ")
@@ -338,7 +390,7 @@
 
                       // Examine the text in the response
                       response.json().then(function (data) {
-                        console.log(data);
+                        // console.log(data);
                         let adRate;
                         if (window.localStorage.getItem("type") == "text") {
                           adRate = `The ad rate in,  ${window.localStorage.getItem(
@@ -377,10 +429,12 @@
                   new SpeechSynthesisUtterance(
                     `Sorry, ${window.localStorage.getItem(
                       "name"
-                    )}, I didn't got that, but I can do 2 Things for You ?
-                     First,  You can Ask For What are currently available newspaper languages in newspaper
-                     and Second,  You can also Ask For Newspaper Ad rates.
-                     Which Option You Like the most ? `
+                    )}, I didn't got that, but I can do 4 Things for You ?
+                     First,  You can Ask For What are currently available newspaper languages in MyAdsense,
+                     second, You can also Ask For What are all the ad Categories in particular newspaper language,
+                     third, You can ask for What are all newspapers in specific newspaper language and category ?
+                     and fourth,  You can Ask For Newspaper Ad rates.
+                     Which Option You Like the most ?`
                   )
                 );
               }
@@ -442,5 +496,6 @@
         });
       });
     </script>
+    <script src="bot.js"></script>
   </body>
 </html>
