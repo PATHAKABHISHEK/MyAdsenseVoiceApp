@@ -32,7 +32,7 @@
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         const microphone = document.getElementById("microphone");
-
+        let url = "http://localhost:3000/api/v1/newspaper/";
         const result = document.getElementById("result");
         let SpeechRecognition =
           window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -91,9 +91,7 @@
                 textContent.split(" ")[textContent.split(" ").length - 2] ==
                   "first"
               ) {
-                fetch(
-                  "http://localhost:3000/api/v1/newspaper/get_newspaper_language"
-                )
+                fetch(`${url}get_newspaper_language`)
                   .then(function (response) {
                     if (response.status !== 200) {
                       console.log(
@@ -139,9 +137,7 @@
                   )
                 );
 
-                fetch(
-                  `http://localhost:3000/api/v1/newspaper/get_newspaper_category`
-                )
+                fetch(`${url}get_newspaper_category`)
                   .then(function (response) {
                     if (response.status !== 200) {
                       console.log(
@@ -247,23 +243,20 @@
                     )
                   );
 
-                  fetch(
-                    `http://localhost:3000/api/v1/newspaper/get_newspaper_based_on_language_and_category`,
-                    {
-                      method: "POST",
+                  fetch(`${url}get_newspaper_based_on_language_and_category`, {
+                    method: "POST",
 
-                      // Adding body or contents to send
-                      body: JSON.stringify({
-                        language: window.localStorage.getItem("language"),
-                        category: window.localStorage.getItem("category"),
-                      }),
+                    // Adding body or contents to send
+                    body: JSON.stringify({
+                      language: window.localStorage.getItem("language"),
+                      category: window.localStorage.getItem("category"),
+                    }),
 
-                      // Adding headers to the request
-                      headers: {
-                        "Content-type": "application/json; charset=UTF-8",
-                      },
-                    }
-                  )
+                    // Adding headers to the request
+                    headers: {
+                      "Content-type": "application/json; charset=UTF-8",
+                    },
+                  })
                     .then(function (response) {
                       if (response.status !== 200) {
                         console.log(
@@ -369,7 +362,7 @@
                     )
                   );
                   fetch(
-                    `http://localhost:3000/api/v1/newspaper/get_newspaper_ad_rate?newspaper=${window.localStorage.getItem(
+                    `${url}get_newspaper_ad_rate?newspaper=${window.localStorage.getItem(
                       "newspaper"
                     )}&language=${window.localStorage.getItem(
                       "language"
