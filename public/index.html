@@ -40,7 +40,7 @@
         const start = () => {
           speechSynthesis.speak(
             new SpeechSynthesisUtterance(
-              "Hello Buddy, I am Adsense, Who are You, Can I have Your Name Please ?"
+              "Hello Buddy, I am Adsense,.... You can follow user guide for interacting with me, ..... Who are You, Can I have Your Name Please ?"
             )
           );
           recognition.start();
@@ -73,9 +73,10 @@
                   new SpeechSynthesisUtterance(
                     `Hi, ${window.localStorage.getItem(
                       "name"
-                    )}, I can do 2 Things for You ?
-                     First,  You can Ask For What are currently available newspaper languages in newspaper
-                     and Second,  You can also Ask For Newspaper Ad rates.
+                    )}, I can do 3 Things for You ?
+                     First,  You can Ask For What are currently available newspaper languages in MyAdsense,
+                     second, You can also ask for What are all newspapers in specific newspaper language and category ?
+                     and third,  You can Ask For Newspaper Ad rates.
                      Which Option You Like the most ? `
                   )
                 );
@@ -122,7 +123,7 @@
                 "option" ===
                   textContent.split(" ")[textContent.split(" ").length - 1] &&
                 textContent.split(" ")[textContent.split(" ").length - 2] ==
-                  "second"
+                  "third"
               ) {
                 speechSynthesis.speak(
                   new SpeechSynthesisUtterance(
@@ -130,6 +131,22 @@
                       "name"
                     )}, You want Newspaper Ad rates, That sounds Good!!!
                      Tell me the newspaper Language In which you want to publish ad ? `
+                  )
+                );
+              } else if (
+                textContent != "" &&
+                "option" ===
+                  textContent.split(" ")[textContent.split(" ").length - 1] &&
+                textContent.split(" ")[textContent.split(" ").length - 2] ==
+                  "second"
+              ) {
+                let option = "second";
+                window.localStorage.setItem("option", option);
+                speechSynthesis.speak(
+                  new SpeechSynthesisUtterance(
+                    `Ok, ${window.localStorage.getItem(
+                      "name"
+                    )}, You want All the newspapers from some language and some category, That sounds Exciting!!!... Tell me the language in which you want to search all newspapers`
                   )
                 );
               } else if (
@@ -142,11 +159,19 @@
                 ];
                 language.charAt(0).toUpperCase() + language.slice(1);
                 window.localStorage.setItem("language", language);
-                speechSynthesis.speak(
-                  new SpeechSynthesisUtterance(
-                    `Now Tell me In which Newspaper You want to publish ad`
-                  )
-                );
+                if (window.localStorage.getItem("option") == "second") {
+                  speechSynthesis.speak(
+                    new SpeechSynthesisUtterance(
+                      `Now Tell me the Category of ads in which you want to search newspapers`
+                    )
+                  );
+                } else {
+                  speechSynthesis.speak(
+                    new SpeechSynthesisUtterance(
+                      `Now Tell me In which Newspaper You want to publish ad`
+                    )
+                  );
+                }
               } else if (
                 textContent != "" &&
                 "category" ===
@@ -156,13 +181,77 @@
                   .split(" ")
                   [textContent.split(" ").length - 2].toLowerCase();
                 window.localStorage.setItem("category", category);
-                speechSynthesis.speak(
-                  new SpeechSynthesisUtterance(
-                    `${window.localStorage.getItem(
-                      "name"
-                    )}, Now What will be the edition in which you want to publish ad`
+                if (window.localStorage.getItem("option") == "second") {
+                  speechSynthesis.speak(
+                    new SpeechSynthesisUtterance(
+                      `${window.localStorage.getItem(
+                        "name"
+                      )}, You want all the newspapers in ${window.localStorage.getItem(
+                        "language"
+                      )} language and ${window.localStorage.getItem(
+                        "category"
+                      )} category, .. Just wait a minute, I will be back`
+                    )
+                  );
+
+                  fetch(
+                    `http://localhost:3000/api/v1/newspaper/get_newspaper_based_on_language_and_category`,
+                    {
+                      method: "POST",
+
+                      // Adding body or contents to send
+                      body: JSON.stringify({
+                        language: window.localStorage.getItem("language"),
+                        category: window.localStorage.getItem("category"),
+                      }),
+
+                      // Adding headers to the request
+                      headers: {
+                        "Content-type": "application/json; charset=UTF-8",
+                      },
+                    }
                   )
-                );
+                    .then(function (response) {
+                      if (response.status !== 200) {
+                        console.log(
+                          "Looks like there was a problem. Status Code: " +
+                            response.status
+                        );
+                        return;
+                      }
+
+                      // Examine the text in the response
+                      response.json().then(function (data) {
+                        let newspapersBasedOnLanguageAndCategory = `${window.localStorage.getItem(
+                          "name"
+                        )}, The newspapers in ${window.localStorage.getItem(
+                          "language"
+                        )} language and ${window.localStorage.getItem(
+                          "category"
+                        )} category are `;
+                        for (let k = 0; k < data["newspaper"].length; k++) {
+                          newspapersBasedOnLanguageAndCategory +=
+                            data["newspaper"][k] + ", ";
+                        }
+                        speechSynthesis.speak(
+                          new SpeechSynthesisUtterance(
+                            newspapersBasedOnLanguageAndCategory
+                          )
+                        );
+                      });
+                    })
+                    .catch(function (err) {
+                      console.log("Fetch Error :-S", err);
+                    });
+                } else {
+                  speechSynthesis.speak(
+                    new SpeechSynthesisUtterance(
+                      `${window.localStorage.getItem(
+                        "name"
+                      )}, Now What will be the edition in which you want to publish ad`
+                    )
+                  );
+                }
               } else if (
                 textContent != "" &&
                 "newspaper" ===
