@@ -126,6 +126,6 @@ guide.addEventListener("click", function () {
 
     The ad rate in hindu newspaper in  text type and in property category is rupees 2,200 for 4 words
     `;
-  name = "guide.txt";
+  name = "Adsense_UserGuide.txt";
   download(name, text);
 });
