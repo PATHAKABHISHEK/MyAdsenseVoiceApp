@@ -16,27 +16,33 @@
     <title>Document</title>
   </head>
   <body>
-    <div class="main">
+    <div class="main" id="main">
       <div class="logo">
         <span id="my">My</span><span id="ad">Ad</span
         ><span id="sense">sense</span>
       </div>
       <div class="search">
-        <input type="text" name="" id="" />
-        <i class="fa fa-microphone fa-2x microphone" id="microphone"></i>
-        <span class="searchBtn">Search</span>
-        <div id="result"></div>
+        <i class="fa fa-microphone fa-5x microphone" id="microphone"></i>
       </div>
+      <div id="result"></div>
     </div>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         const microphone = document.getElementById("microphone");
+
         const result = document.getElementById("result");
-        const SpeechRecognition =
+        let SpeechRecognition =
           window.SpeechRecognition || window.webkitSpeechRecognition;
+
         let listening = false;
-        const recognition = new SpeechRecognition();
+
+        let recognition = new SpeechRecognition();
         const start = () => {
+          speechSynthesis.speak(
+            new SpeechSynthesisUtterance(
+              "Hello Buddy, I am Adsense, Who are You, Can I have Your Name Please ?"
+            )
+          );
           recognition.start();
         };
         const stop = () => {
@@ -44,68 +50,306 @@
         };
         const onResult = (event) => {
           result.innerHTML = "";
+          let textContent = "";
+          let j = 0;
           for (const res of event.results) {
             const text = document.createTextNode(res[0].transcript);
-
-            const p = document.createElement("p");
-            if (res.isFinal) {
+            console.log(j);
+            console.log(event.results.length - 1);
+            let p = document.createElement("p");
+            if (res.isFinal && j == event.results.length - 1) {
               p.classList.add("final");
+              // console.log(event.results[event.results.length - 1]);
+              console.log(res);
+              textContent += res[0].transcript.trim();
+              // event.results[event.results.length - 1][0].transcript;
+              console.log(textContent);
+              if (textContent.split(" ").indexOf("name") >= 0) {
+                let name = textContent.split(" ")[
+                  textContent.split(" ").length - 1
+                ];
+                window.localStorage.setItem("name", name);
+                speechSynthesis.speak(
+                  new SpeechSynthesisUtterance(
+                    `Hi, ${window.localStorage.getItem(
+                      "name"
+                    )}, I can do 2 Things for You ?
+                     First,  You can Ask For What are currently available newspaper languages in newspaper
+                     and Second,  You can also Ask For Newspaper Ad rates.
+                     Which Option You Like the most ? `
+                  )
+                );
+              } else if (
+                textContent != "" &&
+                "option" ==
+                  textContent.split(" ")[textContent.split(" ").length - 1] &&
+                textContent.split(" ")[textContent.split(" ").length - 2] ==
+                  "first"
+              ) {
+                fetch(
+                  "http://localhost:3000/api/v1/newspaper/get_newspaper_language"
+                )
+                  .then(function (response) {
+                    if (response.status !== 200) {
+                      console.log(
+                        "Looks like there was a problem. Status Code: " +
+                          response.status
+                      );
+                      return;
+                    }
+
+                    // Examine the text in the response
+                    response.json().then(function (data) {
+                      let languageText = "";
+                      for (language of data["languages"]) {
+                        languageText += language + ", ";
+                      }
+                      speechSynthesis.speak(
+                        new SpeechSynthesisUtterance(
+                          `Ok, ${window.localStorage.getItem(
+                            "name"
+                          )}, You want Currently Available Newspaper Languages, That seems Cool!!!
+                     buddy, The available newspaper languages in myadsense are ${languageText}`
+                        )
+                      );
+                    });
+                  })
+                  .catch(function (err) {
+                    console.log("Fetch Error :-S", err);
+                  });
+              } else if (
+                textContent != "" &&
+                "option" ===
+                  textContent.split(" ")[textContent.split(" ").length - 1] &&
+                textContent.split(" ")[textContent.split(" ").length - 2] ==
+                  "second"
+              ) {
+                speechSynthesis.speak(
+                  new SpeechSynthesisUtterance(
+                    `Ok, ${window.localStorage.getItem(
+                      "name"
+                    )}, You want Newspaper Ad rates, That sounds Good!!!
+                     Tell me the newspaper Language In which you want to publish ad ? `
+                  )
+                );
+              } else if (
+                textContent != "" &&
+                "language" ===
+                  textContent.split(" ")[textContent.split(" ").length - 1]
+              ) {
+                let language = textContent.split(" ")[
+                  textContent.split(" ").length - 2
+                ];
+                language.charAt(0).toUpperCase() + language.slice(1);
+                window.localStorage.setItem("language", language);
+                speechSynthesis.speak(
+                  new SpeechSynthesisUtterance(
+                    `Now Tell me In which Newspaper You want to publish ad`
+                  )
+                );
+              } else if (
+                textContent != "" &&
+                "category" ===
+                  textContent.split(" ")[textContent.split(" ").length - 1]
+              ) {
+                let category = textContent
+                  .split(" ")
+                  [textContent.split(" ").length - 2].toLowerCase();
+                window.localStorage.setItem("category", category);
+                speechSynthesis.speak(
+                  new SpeechSynthesisUtterance(
+                    `${window.localStorage.getItem(
+                      "name"
+                    )}, Now What will be the edition in which you want to publish ad`
+                  )
+                );
+              } else if (
+                textContent != "" &&
+                "newspaper" ===
+                  textContent.split(" ")[textContent.split(" ").length - 1]
+              ) {
+                let newspaper;
+                if (textContent.split(" ").length == 3) {
+                  let array = textContent.split(" ");
+                  array.pop();
+                  newspaper = array.join("").toLowerCase();
+                  console.log();
+                } else {
+                  newspaper = textContent
+                    .split(" ")
+                    [textContent.split(" ").length - 2].toLowerCase();
+                }
+
+                window.localStorage.setItem("newspaper", newspaper);
+                speechSynthesis.speak(
+                  new SpeechSynthesisUtterance(
+                    `${window.localStorage.getItem(
+                      "name"
+                    )}, Now What will be the category in which you want to publish ad`
+                  )
+                );
+              } else if (
+                textContent != "" &&
+                "edition" ===
+                  textContent.split(" ")[textContent.split(" ").length - 1]
+              ) {
+                let edition = textContent
+                  .split(" ")
+                  [textContent.split(" ").length - 2].toLowerCase();
+                window.localStorage.setItem("edition", edition);
+                speechSynthesis.speak(
+                  new SpeechSynthesisUtterance(
+                    `${window.localStorage.getItem(
+                      "name"
+                    )}, Now What will be the type for your new ad`
+                  )
+                );
+              } else if (
+                textContent != "" &&
+                "type" ===
+                  textContent.split(" ")[textContent.split(" ").length - 1]
+              ) {
+                let type = textContent
+                  .split(" ")
+                  [textContent.split(" ").length - 2].toLowerCase();
+                window.localStorage.setItem("type", type);
+                if (
+                  window.localStorage.getItem("type") &&
+                  window.localStorage.getItem("category") &&
+                  window.localStorage.getItem("newspaper") &&
+                  window.localStorage.getItem("edition") &&
+                  window.localStorage.getItem("language")
+                ) {
+                  speechSynthesis.speak(
+                    new SpeechSynthesisUtterance(
+                      `${window.localStorage.getItem(
+                        "name"
+                      )}, I got all the stuff just wait a minute`
+                    )
+                  );
+                  fetch(
+                    `http://localhost:3000/api/v1/newspaper/get_newspaper_ad_rate?newspaper=${window.localStorage.getItem(
+                      "newspaper"
+                    )}&language=${window.localStorage.getItem(
+                      "language"
+                    )}&category=${window.localStorage.getItem(
+                      "category"
+                    )}&adType=${window.localStorage.getItem(
+                      "type"
+                    )}&edition=${window.localStorage.getItem("edition")}`
+                  )
+                    .then(function (response) {
+                      if (response.status !== 200) {
+                        console.log(
+                          "Looks like there was a problem. Status Code: " +
+                            response.status
+                        );
+                        return;
+                      }
+
+                      // Examine the text in the response
+                      response.json().then(function (data) {
+                        console.log(data);
+                        let adRate;
+                        if (window.localStorage.getItem("type") == "text") {
+                          adRate = `The ad rate in,  ${window.localStorage.getItem(
+                            "newspaper"
+                          )} newspaper,  in  ${window.localStorage.getItem(
+                            "type"
+                          )} type, and in ${window.localStorage.getItem(
+                            "category"
+                          )} category, is rupees ${data["adTextPrice"]} for ${
+                            data["adTextWord"]
+                          }`;
+                        } else {
+                          adRate = `The ad rate in,  ${window.localStorage.getItem(
+                            "newspaper"
+                          )} newspaper, in  ${window.localStorage.getItem(
+                            "type"
+                          )} type, and in ${window.localStorage.getItem(
+                            "category"
+                          )} category, is rupees ${
+                            data["adDisplayPrice"]
+                          } for ${data["adDisplaySize"]}`;
+                        }
+                        speechSynthesis.speak(
+                          new SpeechSynthesisUtterance(
+                            `${window.localStorage.getItem("name")}, ${adRate}`
+                          )
+                        );
+                      });
+                    })
+                    .catch(function (err) {
+                      console.log("Fetch Error :-S", err);
+                    });
+                }
+              } else {
+                speechSynthesis.speak(
+                  new SpeechSynthesisUtterance(
+                    `Sorry, ${window.localStorage.getItem(
+                      "name"
+                    )}, I didn't got that, but I can do 2 Things for You ?
+                     First,  You can Ask For What are currently available newspaper languages in newspaper
+                     and Second,  You can also Ask For Newspaper Ad rates.
+                     Which Option You Like the most ? `
+                  )
+                );
+              }
+              result.innerHTML = "";
+              textContent = "";
             }
+
             p.appendChild(text);
+
             result.appendChild(p);
-            if (p.innerHTML.trim().toUpperCase() === "adsense".toUpperCase()) {
-              fetch("/api/v1/query/adsense")
-                .then(function (response) {
-                  console.log(response);
-                  if (response.status !== 200) {
-                    console.log(
-                      "Looks like there was a problem. Status Code: " +
-                        response.status
-                    );
-                    return;
-                  }
-
-                  // Examine the text in the response
-                  response.json().then(function (data) {
-                    console.log(data);
-                  });
-                })
-                .catch(function (err) {
-                  console.log("Fetch Error :-S", err);
-                });
-            } else if (p.innerHTML.trim() === "newspaper languages") {
-              fetch(
-                "/api/v1/query/getNewspaperLanguageIntent?command=newspaper languages"
-              )
-                .then(function (response) {
-                  console.log(response);
-                  if (response.status !== 200) {
-                    console.log(
-                      "Looks like there was a problem. Status Code: " +
-                        response.status
-                    );
-                    return;
-                  }
-
-                  // Examine the text in the response
-                  response.json().then(function (data) {
-                    console.log(data);
-                  });
-                })
-                .catch(function (err) {
-                  console.log("Fetch Error :-S", err);
-                });
-            }
+            j++;
           }
         };
 
         recognition.continuous = true;
-        recognition.interimResults = true;
+        recognition.interimResults = false;
         recognition.addEventListener("result", onResult);
 
         microphone.addEventListener("click", () => {
-          listening ? start() : stop();
+          if (listening) {
+            document.getElementById("animation").remove();
+          } else {
+            let animationDiv = document.createElement("div");
+            let idAttributeDiv = document.createAttribute("id");
+            idAttributeDiv.value = "animation";
+            animationDiv.setAttributeNode(idAttributeDiv);
+            document.getElementById("main").appendChild(animationDiv);
+
+            let animationDiv0 = document.createElement("div");
+            let classAttributeDiv0 = document.createAttribute("class");
+            classAttributeDiv0.value = "circle";
+            animationDiv0.setAttributeNode(classAttributeDiv0);
+            animationDiv0.style["animationDelay"] = "0s";
+            document.getElementById("animation").appendChild(animationDiv0);
+
+            let animationDiv1 = document.createElement("div");
+            let classAttributeDiv1 = document.createAttribute("class");
+            classAttributeDiv1.value = "circle";
+            animationDiv1.setAttributeNode(classAttributeDiv1);
+            animationDiv1.style["animationDelay"] = "1s";
+            document.getElementById("animation").appendChild(animationDiv1);
+
+            let animationDiv2 = document.createElement("div");
+            let classAttributeDiv2 = document.createAttribute("class");
+            classAttributeDiv2.value = "circle";
+            animationDiv2.setAttributeNode(classAttributeDiv2);
+            animationDiv2.style["animationDelay"] = "2s";
+            document.getElementById("animation").appendChild(animationDiv2);
+
+            let animationDiv3 = document.createElement("div");
+            let classAttributeDiv3 = document.createAttribute("class");
+            classAttributeDiv3.value = "circle";
+            animationDiv3.setAttributeNode(classAttributeDiv3);
+            animationDiv3.style["animationDelay"] = "0s";
+            document.getElementById("animation").appendChild(animationDiv3);
+          }
           listening = !listening;
+          listening ? start() : stop();
         });
       });
     </script>

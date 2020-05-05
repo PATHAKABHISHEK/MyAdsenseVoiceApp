@@ -17,7 +17,7 @@ class QueryController {
       this.getNewspaperLanguages.bind(this)
     );
     this.queryRouter.post(
-      "/get_newspaper_ad_rate",
+      "/getNewspaperAdRateIntent",
       this.getNewspaperAdRate.bind(this)
     );
   }

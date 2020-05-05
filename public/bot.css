@@ -10,17 +10,23 @@ input{
     width: 480px;
     height: 50px;
     top: 48%;
-    left: 31%;
+    left: 45%;
+    z-index: 99999;
 }
 .logo{
     position: absolute;
     width: 480px;
     height: 50px;
-    top: 30%;
+    top: 20%;
     left: 36%;
     font-weight: 800;
     font-size: 50px;
     font-family: 'Lobster', cursive;
+    z-index: 99999;
+
+}
+.fa{
+    color: #ff1300 !important;
 }
 #my{
     color: #fc8516;
@@ -40,3 +46,26 @@ input{
 i{
     margin-top: 5%;
 }
+
+.circle {
+    border-radius: 50%;
+    background-color: rgb(0, 247, 255);
+    width: 150px;
+    height: 150px;
+    position: absolute;
+    top: 46%;
+    left: 41%;
+    opacity: 0;
+    animation: scaleIn 4s infinite cubic-bezier(.36, .11, .89, .32);
+  }
+
+  @keyframes scaleIn {
+    from {
+      transform: scale(.5, .5);
+      opacity: .5;
+    }
+    to {
+      transform: scale(2.5, 2.5);
+      opacity: 0;
+    }
+  }
