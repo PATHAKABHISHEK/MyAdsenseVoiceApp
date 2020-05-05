@@ -169,14 +169,15 @@
                     console.log("Fetch Error :-S", err);
                   });
               } else if (
-                (textContent != "" &&
-                  "option" ===
-                    textContent.split(" ")[textContent.split(" ").length - 1] &&
+                textContent != "" &&
+                "option" ===
+                  textContent.split(" ")[textContent.split(" ").length - 1] &&
+                (textContent.split(" ")[textContent.split(" ").length - 2] ==
+                  "4th" ||
                   textContent.split(" ")[textContent.split(" ").length - 2] ==
-                    "4th") ||
-                textContent.split(" ")[textContent.split(" ").length - 2] ==
-                  "fourth"
+                    "fourth")
               ) {
+                window.localStorage.setItem("option", "fourth");
                 speechSynthesis.speak(
                   new SpeechSynthesisUtterance(
                     `Ok, ${window.localStorage.getItem(
