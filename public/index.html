@@ -169,11 +169,13 @@
                     console.log("Fetch Error :-S", err);
                   });
               } else if (
-                textContent != "" &&
-                "option" ===
-                  textContent.split(" ")[textContent.split(" ").length - 1] &&
+                (textContent != "" &&
+                  "option" ===
+                    textContent.split(" ")[textContent.split(" ").length - 1] &&
+                  textContent.split(" ")[textContent.split(" ").length - 2] ==
+                    "4th") ||
                 textContent.split(" ")[textContent.split(" ").length - 2] ==
-                  "4th"
+                  "fourth"
               ) {
                 speechSynthesis.speak(
                   new SpeechSynthesisUtterance(
