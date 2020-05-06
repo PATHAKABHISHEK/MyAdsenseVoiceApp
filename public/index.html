@@ -13,6 +13,10 @@
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat&display=swap"
+      rel="stylesheet"
+    />
     <title>Document</title>
   </head>
   <body>
@@ -25,6 +29,7 @@
         <i class="fa fa-microphone fa-5x microphone" id="microphone"></i>
       </div>
       <div id="result"></div>
+      <div id="result"></div>
     </div>
     <div>
       <img src="guide.png" alt="" id="guide" />
@@ -33,8 +38,9 @@
       window.addEventListener("DOMContentLoaded", () => {
         const microphone = document.getElementById("microphone");
         // let url = "http://localhost:3000/api/v1/newspaper/";
-        let url = "https://d4c79bc9.ngrok.io/api/v1/newspaper/";
+        let url = "https://f0e96487.ngrok.io/api/v1/newspaper/";
         const result = document.getElementById("result");
+        const result1 = document.getElementById("result");
         let SpeechRecognition =
           window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -42,6 +48,15 @@
 
         let recognition = new SpeechRecognition();
         const start = () => {
+          result.appendChild(
+            document
+              .createElement("p")
+              .appendChild(
+                document.createTextNode(
+                  "Adsense: Hello Buddy, I am Adsense,.... You can follow user guide for interacting with me, ..... Who are You, Can I have Your Name Please ?"
+                )
+              )
+          );
           speechSynthesis.speak(
             new SpeechSynthesisUtterance(
               "Hello Buddy, I am Adsense,.... You can follow user guide for interacting with me, ..... Who are You, Can I have Your Name Please ?"
@@ -57,7 +72,7 @@
           let textContent = "";
           let j = 0;
           for (const res of event.results) {
-            const text = document.createTextNode(res[0].transcript);
+            const text = document.createTextNode("You: " + res[0].transcript);
             // console.log(j);
             // console.log(event.results.length - 1);
             let p = document.createElement("p");
@@ -73,6 +88,20 @@
                   textContent.split(" ").length - 1
                 ];
                 window.localStorage.setItem("name", name);
+                result1.appendChild(
+                  document.createElement("p").appendChild(
+                    document.createTextNode(
+                      `Adsense: Hi, ${window.localStorage.getItem(
+                        "name"
+                      )}, I can do 4 Things for You ?
+                     First,  You can Ask For What are currently available newspaper languages in MyAdsense,
+                     second, You can also Ask For What are all the ad Categories in particular newspaper language,
+                     third, You can ask for What are all newspapers in specific newspaper language and category ?
+                     and fourth,  You can Ask For Newspaper Ad rates.
+                     Which Option You Like the most ? `
+                    )
+                  )
+                );
                 speechSynthesis.speak(
                   new SpeechSynthesisUtterance(
                     `Hi, ${window.localStorage.getItem(
@@ -108,6 +137,16 @@
                       for (language of data["languages"]) {
                         languageText += language + ", ";
                       }
+                      result.appendChild(
+                        document.createElement("p").appendChild(
+                          document.createTextNode(
+                            `Adsense: Ok, ${window.localStorage.getItem(
+                              "name"
+                            )}, You want Currently Available Newspaper Languages, That seems Cool!!!
+                     buddy, The available newspaper languages in myadsense are ${languageText}`
+                          )
+                        )
+                      );
                       speechSynthesis.speak(
                         new SpeechSynthesisUtterance(
                           `Ok, ${window.localStorage.getItem(
@@ -130,6 +169,17 @@
               ) {
                 let option = "second";
                 window.localStorage.setItem("option", option);
+                result.appendChild(
+                  document
+                    .createElement("p")
+                    .appendChild(
+                      document.createTextNode(
+                        `Adsense: Ok, ${window.localStorage.getItem(
+                          "name"
+                        )}, You want possible ad categories, .. Just wait a minute, I will be back soon`
+                      )
+                    )
+                );
                 speechSynthesis.speak(
                   new SpeechSynthesisUtterance(
                     `Ok, ${window.localStorage.getItem(
@@ -178,6 +228,16 @@
                     "fourth")
               ) {
                 window.localStorage.setItem("option", "fourth");
+                result.appendChild(
+                  document.createElement("p").appendChild(
+                    document.createTextNode(
+                      `Adsense: Ok, ${window.localStorage.getItem(
+                        "name"
+                      )}, You want Newspaper Ad rates, That sounds Good!!!
+                     Tell me the newspaper Language In which you want to publish ad ? `
+                    )
+                  )
+                );
                 speechSynthesis.speak(
                   new SpeechSynthesisUtterance(
                     `Ok, ${window.localStorage.getItem(
@@ -195,6 +255,17 @@
               ) {
                 let option = "third";
                 window.localStorage.setItem("option", option);
+                result.appendChild(
+                  document
+                    .createElement("p")
+                    .appendChild(
+                      document.createTextNode(
+                        `Adsense: Ok, ${window.localStorage.getItem(
+                          "name"
+                        )}, You want All the newspapers from some language and some category, That sounds Exciting!!!... Tell me the language in which you want to search all newspapers`
+                      )
+                    )
+                );
                 speechSynthesis.speak(
                   new SpeechSynthesisUtterance(
                     `Ok, ${window.localStorage.getItem(
@@ -213,12 +284,30 @@
                 language.charAt(0).toUpperCase() + language.slice(1);
                 window.localStorage.setItem("language", language);
                 if (window.localStorage.getItem("option") == "third") {
+                  result.appendChild(
+                    document
+                      .createElement("p")
+                      .appendChild(
+                        document.createTextNode(
+                          `Adsense: Now Tell me the Category of ads in which you want to search newspapers`
+                        )
+                      )
+                  );
                   speechSynthesis.speak(
                     new SpeechSynthesisUtterance(
                       `Now Tell me the Category of ads in which you want to search newspapers`
                     )
                   );
                 } else {
+                  result.appendChild(
+                    document
+                      .createElement("p")
+                      .appendChild(
+                        document.createTextNode(
+                          `Adsense: Now Tell me In which Newspaper You want to publish ad`
+                        )
+                      )
+                  );
                   speechSynthesis.speak(
                     new SpeechSynthesisUtterance(
                       `Now Tell me In which Newspaper You want to publish ad`
@@ -235,6 +324,21 @@
                   [textContent.split(" ").length - 2].toLowerCase();
                 window.localStorage.setItem("category", category);
                 if (window.localStorage.getItem("option") == "third") {
+                  result.appendChild(
+                    document
+                      .createElement("p")
+                      .appendChild(
+                        document.createTextNode(
+                          `Adsense: ${window.localStorage.getItem(
+                            "name"
+                          )}, You want all the newspapers in ${window.localStorage.getItem(
+                            "language"
+                          )} language and ${window.localStorage.getItem(
+                            "category"
+                          )} category, .. Just wait a minute, I will be back`
+                        )
+                      )
+                  );
                   speechSynthesis.speak(
                     new SpeechSynthesisUtterance(
                       `${window.localStorage.getItem(
@@ -283,6 +387,15 @@
                           newspapersBasedOnLanguageAndCategory +=
                             data["newspaper"][k] + ", ";
                         }
+                        result.appendChild(
+                          document
+                            .createElement("p")
+                            .appendChild(
+                              document.createTextNode(
+                                `newspapersBasedOnLanguageAndCategory`
+                              )
+                            )
+                        );
                         speechSynthesis.speak(
                           new SpeechSynthesisUtterance(
                             newspapersBasedOnLanguageAndCategory
@@ -294,6 +407,17 @@
                       console.log("Fetch Error :-S", err);
                     });
                 } else {
+                  result.appendChild(
+                    document
+                      .createElement("p")
+                      .appendChild(
+                        document.createTextNode(
+                          `${window.localStorage.getItem(
+                            "name"
+                          )}, Now What will be the edition in which you want to publish ad`
+                        )
+                      )
+                  );
                   speechSynthesis.speak(
                     new SpeechSynthesisUtterance(
                       `${window.localStorage.getItem(
@@ -319,6 +443,17 @@
                 }
 
                 window.localStorage.setItem("newspaper", newspaper);
+                result.appendChild(
+                  document
+                    .createElement("p")
+                    .appendChild(
+                      document.createTextNode(
+                        `${window.localStorage.getItem(
+                          "name"
+                        )}, Now What will be the category in which you want to publish ad`
+                      )
+                    )
+                );
                 speechSynthesis.speak(
                   new SpeechSynthesisUtterance(
                     `${window.localStorage.getItem(
@@ -335,6 +470,17 @@
                   .split(" ")
                   [textContent.split(" ").length - 2].toLowerCase();
                 window.localStorage.setItem("edition", edition);
+                result.appendChild(
+                  document
+                    .createElement("p")
+                    .appendChild(
+                      document.createTextNode(
+                        `${window.localStorage.getItem(
+                          "name"
+                        )}, Now What will be the type for your new ad`
+                      )
+                    )
+                );
                 speechSynthesis.speak(
                   new SpeechSynthesisUtterance(
                     `${window.localStorage.getItem(
@@ -358,6 +504,17 @@
                   window.localStorage.getItem("edition") &&
                   window.localStorage.getItem("language")
                 ) {
+                  result.appendChild(
+                    document
+                      .createElement("p")
+                      .appendChild(
+                        document.createTextNode(
+                          `${window.localStorage.getItem(
+                            "name"
+                          )}, I got all the stuff just wait a minute`
+                        )
+                      )
+                  );
                   speechSynthesis.speak(
                     new SpeechSynthesisUtterance(
                       `${window.localStorage.getItem(
@@ -410,6 +567,17 @@
                             data["adDisplayPrice"]
                           } for ${data["adDisplaySize"]}`;
                         }
+                        result.appendChild(
+                          document
+                            .createElement("p")
+                            .appendChild(
+                              document.createTextNode(
+                                `${window.localStorage.getItem(
+                                  "name"
+                                )}, ${adRate}`
+                              )
+                            )
+                        );
                         speechSynthesis.speak(
                           new SpeechSynthesisUtterance(
                             `${window.localStorage.getItem("name")}, ${adRate}`
@@ -422,6 +590,20 @@
                     });
                 }
               } else {
+                result.appendChild(
+                  document.createElement("p").appendChild(
+                    document.createTextNode(
+                      `Sorry, ${window.localStorage.getItem(
+                        "name"
+                      )}, I didn't got that, but I can do 4 Things for You ?
+                     First,  You can Ask For What are currently available newspaper languages in MyAdsense,
+                     second, You can also Ask For What are all the ad Categories in particular newspaper language,
+                     third, You can ask for What are all newspapers in specific newspaper language and category ?
+                     and fourth,  You can Ask For Newspaper Ad rates.
+                     Which Option You Like the most ?`
+                    )
+                  )
+                );
                 speechSynthesis.speak(
                   new SpeechSynthesisUtterance(
                     `Sorry, ${window.localStorage.getItem(
@@ -442,6 +624,7 @@
             p.appendChild(text);
 
             result.appendChild(p);
+
             j++;
           }
         };
